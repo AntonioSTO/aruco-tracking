@@ -38,5 +38,7 @@ while True:
 
     if cv2.waitKey(1) == 27:
         break
+    elif cv2.waitKey(1) & 0xFF == ord('q'):
+        circle_tracker = []
 
     cv2.imshow("img", img)
