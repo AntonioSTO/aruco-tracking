@@ -21,7 +21,7 @@ def findAruco(img, marker_size=6, total_markers=250):
             cx = int((bbox_points[0][0] + bbox_points[1][0] + bbox_points[2][0] + bbox_points[3][0]) / 4)
             cy = int((bbox_points[0][1] + bbox_points[1][1] + bbox_points[2][1] + bbox_points[3][1]) / 4)
 
-            # Atualizar a posição do círculo para o centro do marcador
+            # Atualiza a posição do círculo para o centro do marcador
             circle_tracker.append((cx,cy))
 
     return bbox, ids
