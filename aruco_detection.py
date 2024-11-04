@@ -9,7 +9,7 @@ def findAruco(img, marker_size=6, total_markers=250):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     key = getattr(aruco, f'DICT_{marker_size}X{marker_size}_{total_markers}')
     arucoDict = aruco.getPredefinedDictionary(key)
-    parameters = aruco.DetectorParameters()
+    parameters = aruco.DetectorParameters_create()  # Use the correct method to create parameters
     bbox, ids, _ = aruco.detectMarkers(gray, arucoDict, parameters=parameters)
     
     if ids is not None:
@@ -17,27 +17,35 @@ def findAruco(img, marker_size=6, total_markers=250):
             id = ids[i][0]
             bbox_points = bbox[i][0]
 
-            # Centro do marcador
+            # Center of the marker
             cx = int((bbox_points[0][0] + bbox_points[1][0] + bbox_points[2][0] + bbox_points[3][0]) / 4)
             cy = int((bbox_points[0][1] + bbox_points[1][1] + bbox_points[2][1] + bbox_points[3][1]) / 4)
 
-            # Atualiza a posição do círculo para o centro do marcador
-            circle_tracker.append((cx,cy))
+            # Update the position of the circle to the center of the marker
+            circle_tracker.append((cx, cy))
 
     return bbox, ids
 
 while True:
     ret, img = capture.read()
+    if not ret:
+        print("Failed to capture image")
+        break
 
     bbox, ids = findAruco(img)
     
-    # Desenhar os círculos com base nas posições dos marcadores
+    # Draw circles based on marker positions
     for coord in circle_tracker:
         cv2.circle(img, coord, 5, (0, 0, 255), -1)  
 
-    if cv2.waitKey(1) == 27:
+    cv2.imshow("img", img)
+
+    key = cv2.waitKey(1)
+    if key == 27:  # Escape key
         break
-    elif cv2.waitKey(1) & 0xFF == ord('q'):
+    elif key & 0xFF == ord('q'):
         circle_tracker = []
 
-    cv2.imshow("img", img)
+# Release the capture and destroy all windows
+capture.release()
+cv2.destroyAllWindows()
